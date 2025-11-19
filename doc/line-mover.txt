@@ -1,4 +1,4 @@
-*line-mover.nvim* |LineMover|
+*line-mover.nvim* 
 
 ==============================================================================
 1. INTRODUCTION                                           *line-mover-introduction*
@@ -56,12 +56,10 @@ The primary feature is moving lines and selections using counts.
 
 The following commands move the current line:
 
-| Command | Action                                       | With Count |
-|:--------|:---------------------------------------------|:-----------|
-| <A-k>   | Move current line **up** | Moves [count] times up. |
-| <A-j>   | Move current line **down** | Moves [count] times down. |
-| <A-h>   | Indent current line **left** (un-indent)     | Repeats [count] times. |
-| <A-l>   | Indent current line **right** (indent)       | Repeats [count] times. |
+- <A-k>    Move current line **up** 
+- <A-j>    Move current line **down** 
+- <A-h>    Indent current line **left**
+- <A-l>    Indent current line **right**
 
 Example:
   To move the current line 5 lines down: press `5<A-j>`.
@@ -69,14 +67,12 @@ Example:
 4.2. Moving Selections in Visual Mode                     *LineMover-move-selection*
 
 The same commands apply in Visual Mode ('v'), Visual Line Mode ('V'), and
-Visual Block Mode (<C-v>) to move the entire selection:
+Visual Block Mode (<C-v>) to move the entireselection:
 
-| Command | Action                                       | With Count |
-|:--------|:---------------------------------------------|:-----------|
-| <A-k>   | Move visual selection **up** | Moves [count] times up. |
-| <A-j>   | Move visual selection **down** | Moves [count] times down. |
-| <A-h>   | Indent visual selection **left** (un-indent) | Repeats [count] times. |
-| <A-l>   | Indent visual selection **right** (indent)   | Repeats [count] times. |
+- <A-k>    Move visual selection **up** 
+- <A-j>    Move visual selection **down** 
+- <A-h>    Indent visual selection **left** 
+- <A-l>    Indent visual selection **right** 
 
 ==============================================================================
 5. FUNCTIONS                                                *line-mover-functions*

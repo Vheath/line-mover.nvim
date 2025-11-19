@@ -191,7 +191,7 @@ H.correct_cursor_col = function(ref_curpos, ref_last_col)
 
 	vim.fn.cursor({ vim.fn.line("."), new_col })
 end
-
-Module.setup()
+--
+-- Module.setup()
 
 return Module

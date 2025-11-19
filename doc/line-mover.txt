@@ -1,0 +1,104 @@
+*line-mover.nvim* |LineMover|
+
+==============================================================================
+1. INTRODUCTION                                           *line-mover-introduction*
+
+LineMover is a lightweight Neovim plugin that provides seamless, repeatable
+movement of the current line or a visual selection both vertically (up/down)
+and horizontally (indent/unindent).
+
+==============================================================================
+2. INSTALLATION                                           *line-mover-installation*
+
+Use your preferred package manager (e.g., packer.nvim, lazy.nvim).
+
+Example (lazy.nvim):
+>lua
+  {
+    'Vheath/line-mover.nvim',
+    config = function()
+      require('line-mover').setup()
+    end,
+  },
+<
+
+==============================================================================
+3. SETUP AND CONFIGURATION                                 *line-mover-setup*
+
+The plugin is configured by calling the |setup()| function. All default
+mappings are defined under the `mappings` key.
+
+>lua
+  require('line-mover').setup({
+      mappings = {
+          -- Default Mappings:
+          one_up     = '<A-k>',    -- Normal Mode: Move line up
+          one_down   = '<A-j>',    -- Normal Mode: Move line down
+          one_left   = '<A-h>',    -- Normal Mode: Indent line left
+          one_right  = '<A-l>',    -- Normal Mode: Indent line right
+
+          visual_up    = '<A-k>',  -- Visual Mode: Move selection up
+          visual_down  = '<A-j>',  -- Visual Mode: Move selection down
+          visual_left  = '<A-h>',  -- Visual Mode: Indent selection left
+          visual_right = '<A-l>',  -- Visual Mode: Indent selection right
+      },
+      -- Future options can be placed here
+      options = {},
+  })
+<
+
+==============================================================================
+4. USAGE                                                    *line-mover-usage*
+
+The primary feature is moving lines and selections using counts.
+
+4.1. Moving Lines in Normal Mode                           *LineMover-move-line*
+
+The following commands move the current line:
+
+| Command | Action                                       | With Count |
+|:--------|:---------------------------------------------|:-----------|
+| <A-k>   | Move current line **up** | Moves [count] times up. |
+| <A-j>   | Move current line **down** | Moves [count] times down. |
+| <A-h>   | Indent current line **left** (un-indent)     | Repeats [count] times. |
+| <A-l>   | Indent current line **right** (indent)       | Repeats [count] times. |
+
+Example:
+  To move the current line 5 lines down: press `5<A-j>`.
+
+4.2. Moving Selections in Visual Mode                     *LineMover-move-selection*
+
+The same commands apply in Visual Mode ('v'), Visual Line Mode ('V'), and
+Visual Block Mode (<C-v>) to move the entire selection:
+
+| Command | Action                                       | With Count |
+|:--------|:---------------------------------------------|:-----------|
+| <A-k>   | Move visual selection **up** | Moves [count] times up. |
+| <A-j>   | Move visual selection **down** | Moves [count] times down. |
+| <A-h>   | Indent visual selection **left** (un-indent) | Repeats [count] times. |
+| <A-l>   | Indent visual selection **right** (indent)   | Repeats [count] times. |
+
+==============================================================================
+5. FUNCTIONS                                                *line-mover-functions*
+
+|function|                                      |line-mover.setup()|
+`require('line-mover').setup({config})`
+  Setup function to configure the plugin and create the default mappings.
+
+|function|                                      |line-mover.move_line()|
+`require('line-mover').move_line(direction)`
+  Moves the current line based on the specified direction. Primarily used
+  internally for Normal mode mappings.
+  {direction} is one of 'up', 'down', 'left', 'right'.
+
+|function|                                      |line-mover.move_selection()|
+`require('line-mover').move_selection(direction)`
+  Moves the current visual selection based on the specified direction. Primarily
+  used internally for Visual mode mappings.
+  {direction} is one of 'up', 'down', 'left', 'right'.
+
+==============================================================================
+*line-mover-changelog*
+  (No changes yet)
+
+vim:tw=78:ts=8:ft=help:norl:

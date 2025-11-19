@@ -1,7 +1,41 @@
 --- line-mover.nvim
-
---- MIT License Copyright (c) 2025 Timur Gruzdev
 --- Features:
+---   * Move the current line (Normal mode) or visual selection (Visual/Block mode) up or down.
+---   * Horizontally indent/unindent the current line (Normal mode) or visual selection (Visual/Block mode).
+---   * Supports repetition using the Vim count prefix (e.g., `5<A-k>` moves 5 lines up).
+---
+---
+--- Configuration:
+--- ```lua
+--- require('line-mover').setup({
+---     mappings = {
+---         -- Normal Mode Mappings (for single line movement/indentation)
+---         one_up = "<A-k>",
+---         one_down = "<A-j>",
+---         one_left = "<A-h>",
+---         one_right = "<A-l>",
+---
+---         -- Visual Mode Mappings (for selection movement/indentation)
+---         visual_up = "<A-k>",
+---         visual_down = "<A-j>",
+---         visual_left = "<A-h>",
+---         visual_right = "<A-l>",
+---     },
+---     -- Add other configuration options here in the future
+--- })
+--- ```
+---
+--- Default Mappings:
+--- The plugin defaults to using the **Alt** key combined with standard motion keys:
+---
+--- * **Vertical Movement (Line/Selection)**
+---     * `<Alt-k>`: Move **Up**
+---     * `<Alt-j>`: Move **Down**
+---
+--- * **Horizontal Movement (Line/Selection)**
+---     * `<Alt-h>`: Move **Left** (Un-indent)
+---     * `<Alt-l>`: Move **Right** (Indent)
+---
 
 ---@alias _move_direction string: One of "left", "down", "up", "right".
 
@@ -41,50 +75,17 @@ Module.setup = function(config)
 
 	H.check_type("options", config.options, "table", true)
 
-	H.map(
-		"n",
-		default_config.mappings.one_down,
-		"<Cmd>lua LineMover.move_line('down')<CR>",
-		{ desc = "Move one line down" }
-	)
-	H.map(
-		"n",
-		default_config.mappings.one_left,
-		"<Cmd>lua LineMover.move_line('left')<CR>",
-		{ desc = "Move one line left" }
-	)
-	H.map(
-		"n",
-		default_config.mappings.one_right,
-		"<Cmd>lua LineMover.move_line('right')<CR>",
-		{ desc = "Move one line right" }
-	)
-	H.map("n", default_config.mappings.one_up, "<Cmd>lua LineMover.move_line('up')<CR>", { desc = "Move one line up" })
+	-- stylua: ignore start
+	H.map( "n", default_config.mappings.one_down,  "<Cmd>lua LineMover.move_line('down')<CR>", { desc = "Move one line down" })
+	H.map( "n", default_config.mappings.one_left,  "<Cmd>lua LineMover.move_line('left')<CR>", { desc = "Move one line left" })
+	H.map( "n", default_config.mappings.one_right, "<Cmd>lua LineMover.move_line('right')<CR>",{ desc = "Move one line right" })
+	H.map( "n", default_config.mappings.one_up,    "<Cmd>lua LineMover.move_line('up')<CR>",   { desc = "Move one line up" })
 
-	H.map(
-		"x",
-		default_config.mappings.visual_down,
-		"<Cmd>lua LineMover.move_selection('down')<CR>",
-		{ desc = "Move visual selection down" }
-	)
-	H.map(
-		"x",
-		default_config.mappings.visual_up,
-		"<Cmd>lua LineMover.move_selection('up')<CR>",
-		{ desc = "Move visual selection up" }
-	)
-	H.map(
-		"x",
-		default_config.mappings.visual_left,
-		"<Cmd>lua LineMover.move_selection('left')<CR>",
-		{ desc = "Move visual selection left" }
-	)
-	H.map(
-		"x",
-		default_config.mappings.visual_right,
-		"<Cmd>lua LineMover.move_selection('right')<CR>",
-		{ desc = "Move visual selection right" }
-	)
+	H.map( "x", default_config.mappings.visual_down,  "<Cmd>lua LineMover.move_selection('down')<CR>",  { desc = "Move visual selection down" })
+	H.map( "x", default_config.mappings.visual_up,    "<Cmd>lua LineMover.move_selection('up')<CR>",    { desc = "Move visual selection up" })
+	H.map( "x", default_config.mappings.visual_left,  "<Cmd>lua LineMover.move_selection('left')<CR>",  { desc = "Move visual selection left" })
+	H.map( "x", default_config.mappings.visual_right, "<Cmd>lua LineMover.move_selection('right')<CR>", { desc = "Move visual selection right" })
+	-- stylua: ignore end
 end
 
 Module.move_line = function(_move_direction)

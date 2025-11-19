@@ -50,12 +50,12 @@ mappings are defined under the `mappings` key.
 ==============================================================================
 4. USAGE                                                    *line-mover-usage*
 
-The primary feature is moving lines and selections using counts.
+The main and only feature is moving lines and selections both
+vertically/horizontally.
 
 4.1. Moving Lines in Normal Mode                           *LineMover-move-line*
 
-The following commands move the current line:
-
+The following commands move the current line (defaults):
 - <A-k>    Move current line **up** 
 - <A-j>    Move current line **down** 
 - <A-h>    Indent current line **left**
@@ -67,8 +67,7 @@ Example:
 4.2. Moving Selections in Visual Mode                     *LineMover-move-selection*
 
 The same commands apply in Visual Mode ('v'), Visual Line Mode ('V'), and
-Visual Block Mode (<C-v>) to move the entireselection:
-
+Visual Block Mode (<C-v>) to move the entire selection (defualts):
 - <A-k>    Move visual selection **up** 
 - <A-j>    Move visual selection **down** 
 - <A-h>    Indent visual selection **left** 
@@ -92,9 +91,3 @@ Visual Block Mode (<C-v>) to move the entireselection:
   Moves the current visual selection based on the specified direction. Primarily
   used internally for Visual mode mappings.
   {direction} is one of 'up', 'down', 'left', 'right'.
-
-==============================================================================
-*line-mover-changelog*
-  (No changes yet)
-
-vim:tw=78:ts=8:ft=help:norl:

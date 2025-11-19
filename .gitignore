@@ -1,10 +1,8 @@
-# Compiled Lua sources
 luac.out
 
 # luarocks build files
 *.src.rock
 *.zip
-*.tar.gz
 
 # Object files
 *.o
@@ -31,6 +29,7 @@ luac.out
 *.so.*
 *.dylib
 
+*.tar.gz
 # Executables
 *.exe
 *.out
@@ -39,3 +38,4 @@ luac.out
 *.x86_64
 *.hex
 
+# Compiled Lua sources

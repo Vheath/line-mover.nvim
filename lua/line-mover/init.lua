@@ -11,7 +11,7 @@ local H = {} -- Helper functions
 H.move_keys = {}
 local default_config = {
 	mappings = {
-		one_up = "<a-k>",
+		one_up = "<A-k>",
 		one_down = "<A-j>",
 		one_left = "<A-h>",
 		one_right = "<A-l>",
@@ -61,27 +61,30 @@ Module.setup = function(config)
 	)
 	H.map("n", default_config.mappings.one_up, "<Cmd>lua LineMover.move_line('up')<CR>", { desc = "Move one line up" })
 
-	-- 1. Normal Mode: Move Current Line Up/Down
-	-- :m .-2 moves the current line to BEFORE the current line (.-1),
-	-- effectively shifting it up.
-	-- vim.keymap.set("n", "<A-k>", ":m .-2<CR>", opts)
-
-	-- :m .+1 moves the current line to AFTER the current line (which is .+0),
-	-- effectively shifting it down.
-	-- vim.keymap.set("n", "<A-j>", ":m .+1<CR>", opts)
-
-	-- 2. Visual Mode (Linewise, Blockwise, or Charwise): Move Selection Up/Down
-	-- 'x' map mode covers Visual, Visual-Line, and Visual-Block modes.
-
-	-- Move UP:
-	-- :m '<-2<CR>  -> Move selection (defined by '<,'>) to before the start of the selection.
-	-- gv=gv       -> Re-select the moved block, auto-indent, and re-select again.
-	-- vim.keymap.set("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
-
-	-- Move DOWN:
-	-- :m '>+1<CR>  -> Move selection to after the end of the selection.
-	-- gv=gv       -> Re-select the moved block, auto-indent, and re-select again.
-	-- vim.keymap.set("x", "<A-j>", ":m '>+1<CR>gv=gv", opts)
+	H.map(
+		"x",
+		default_config.mappings.visual_down,
+		"<Cmd>lua LineMover.move_selection('down')<CR>",
+		{ desc = "Move visual selection down" }
+	)
+	H.map(
+		"x",
+		default_config.mappings.visual_up,
+		"<Cmd>lua LineMover.move_selection('up')<CR>",
+		{ desc = "Move visual selection up" }
+	)
+	H.map(
+		"x",
+		default_config.mappings.visual_left,
+		"<Cmd>lua LineMover.move_selection('left')<CR>",
+		{ desc = "Move visual selection left" }
+	)
+	H.map(
+		"x",
+		default_config.mappings.visual_right,
+		"<Cmd>lua LineMover.move_selection('right')<CR>",
+		{ desc = "Move visual selection right" }
+	)
 end
 
 Module.move_line = function(_move_direction)
@@ -103,17 +106,17 @@ Module.move_line = function(_move_direction)
 
 	local cache_z_reg = vim.fn.getreginfo("z") -- save caching register
 
-	vim.api.nvim_feedkeys('"zyy"_dd', "n", false) -- Yank to "z register current line, remove it to black hole reg
+	vim.cmd('normal! "zyy"_dd') -- Yank to "z register current line, remove it to black hole reg
 
 	local paste_key = _move_direction == "down" and "p" or "P"
 	repeat_times = _move_direction == "down" and repeat_times - 1 or repeat_times
 	if repeat_times > 0 then
 		-- move current line repeat_times times
-		vim.api.nvim_feedkeys(string.rep(H.move_keys[_move_direction], repeat_times), "n", false)
+		vim.cmd("normal!" .. string.rep(H.move_keys[_move_direction], repeat_times))
 	end
 
-	vim.api.nvim_feedkeys('"z' .. paste_key, "n", false) -- Paste from "z register before/after current line
-	vim.api.nvim_feedkeys("==", "n", false) -- align moved line
+	vim.cmd('normal! "z' .. paste_key) -- Paste from "z register before/after current line
+	vim.cmd("normal! ==") -- align moved line
 
 	H.correct_cursor_col(ref_curpos, ref_last_col)
 
@@ -126,6 +129,40 @@ Module.move_selection = function(_move_direction)
 	if not (vim.fn.mode() == "v" or vim.fn.mode() == "V" or vim.fn.mode() == "\22") then
 		return
 	end
+
+	local ref_curpos, ref_last_col = vim.fn.getcurpos(), vim.fn.col("$")
+	if ref_curpos[2] == 1 and _move_direction == "up" then
+		return
+	end
+
+	local repeat_times = vim.v.count1
+
+	-- First handle horizontal movements
+	if _move_direction == "left" or _move_direction == "right" then
+		local key = H.indent_keys[_move_direction]
+		vim.cmd("normal! " .. string.rep(key .. "gv", repeat_times)) --
+		H.correct_cursor_col(ref_curpos, ref_last_col)
+		return
+	end
+
+	local cache_z_reg = vim.fn.getreginfo("z") -- save caching register
+
+	vim.cmd('normal! "zygv"_d') -- Yank to "z register current line, remove it to black hole reg
+
+	local paste_key = _move_direction == "down" and "p" or "P"
+	repeat_times = _move_direction == "down" and repeat_times - 1 or repeat_times
+	if repeat_times > 0 then
+		-- move current line repeat_times times
+		vim.cmd("normal!" .. string.rep(H.move_keys[_move_direction], repeat_times))
+	end
+
+	vim.cmd('normal! "z' .. paste_key) -- Paste from "z register before/after current line
+	vim.cmd("normal! `[1v=gv") -- align moved line
+
+	H.correct_cursor_col(ref_curpos, ref_last_col)
+
+	-- Restore starting values for register
+	vim.fn.setreg('"z', cache_z_reg)
 end
 
 -- Helpers
@@ -151,7 +188,7 @@ H.correct_cursor_col = function(ref_curpos, ref_last_col)
 	local col_diff = vim.fn.col("$") - ref_last_col
 	local new_col = math.max(ref_curpos[3] + col_diff, 1)
 
-	vim.fn.cursor({ vim.fn.line("."), new_col, ref_curpos[4], ref_curpos[5] + col_diff })
+	vim.fn.cursor({ vim.fn.line("."), new_col })
 end
 
 Module.setup()

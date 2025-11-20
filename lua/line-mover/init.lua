@@ -59,7 +59,6 @@ local default_config = {
 -- Setup function
 Module.setup = function(config)
 	H.check_type("user_config", config, "table", true)
-	_G.LineMover = Module
 	config = vim.tbl_deep_extend("force", default_config, config or {})
 
 	H.check_type("mappings", config.mappings, "table")
@@ -88,6 +87,8 @@ Module.setup = function(config)
 	-- stylua: ignore end
 end
 
+--- @param: _move_direction
+--- Moves one line in any direction.
 Module.move_line = function(_move_direction)
 	-- Get cursor position, position of end_char
 	local ref_curpos, ref_last_col = vim.fn.getcurpos(), vim.fn.col("$")
@@ -125,6 +126,8 @@ Module.move_line = function(_move_direction)
 	vim.fn.setreg('"z', cache_z_reg)
 end
 
+--- @param: _move_direction
+--- Moves selected text in any direction. Mush be in visual mode to work
 Module.move_selection = function(_move_direction)
 	-- Act only inside visual mode
 	if not (vim.fn.mode() == "v" or vim.fn.mode() == "V" or vim.fn.mode() == "\22") then
@@ -191,7 +194,5 @@ H.correct_cursor_col = function(ref_curpos, ref_last_col)
 
 	vim.fn.cursor({ vim.fn.line("."), new_col })
 end
---
--- Module.setup()
 
 return Module

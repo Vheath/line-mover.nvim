@@ -25,7 +25,7 @@ Example (lazy.nvim):
 ==============================================================================
 3. SETUP AND CONFIGURATION                                 *line-mover-setup*
 
-The plugin is configured by calling the |setup()| function. All default
+The plugin is configured by calling the |setup()| function. All
 mappings are defined under the `mappings` key.
 
 >lua
@@ -42,8 +42,6 @@ mappings are defined under the `mappings` key.
           visual_left  = '<A-h>',  -- Visual Mode: Indent selection left
           visual_right = '<A-l>',  -- Visual Mode: Indent selection right
       },
-      -- Future options can be placed here
-      options = {},
   })
 <
 

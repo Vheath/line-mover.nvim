@@ -51,7 +51,7 @@ mappings are defined under the `mappings` key.
 The main and only feature is moving lines and selections both
 vertically/horizontally.
 
-4.1. Moving Lines in Normal Mode                           *LineMover-move-line*
+4.1. Moving Lines in Normal Mode                           
 
 The following commands move the current line (defaults):
 - <A-k>    Move current line **up** 
@@ -62,7 +62,7 @@ The following commands move the current line (defaults):
 Example:
   To move the current line 5 lines down: press `5<A-j>`.
 
-4.2. Moving Selections in Visual Mode                     *LineMover-move-selection*
+4.2. Moving Selections in Visual Mode                     
 
 The same commands apply in Visual Mode ('v'), Visual Line Mode ('V'), and
 Visual Block Mode (<C-v>) to move the entire selection (defualts):
@@ -72,20 +72,34 @@ Visual Block Mode (<C-v>) to move the entire selection (defualts):
 - <A-l>    Indent visual selection **right** 
 
 ==============================================================================
-5. FUNCTIONS                                                *line-mover-functions*
+`line-mover.setup`({config})                              *line-mover.setup()*
+Parameters ~ 
+{config} `(table|nil)` Module config table. See |line-mover-setup|.
 
-|function|                                      |line-mover.setup()|
-`require('line-mover').setup({config})`
-  Setup function to configure the plugin and create the default mappings.
+Usage ~
+>lua
+  require('line-mover').setup() -- use default config
+  -- OR
+  require('line-mover').setup({}) -- replace {} with your config table
+<
+-------------------------------------------------------------------------------
+`line-mover.move_line`({direction})                          *line-mover.move_line()*
+Parameters ~ 
+{direction} `(string)` Either one of 'up', 'down', 'right', 'left' - direction of movement.
 
-|function|                                      |line-mover.move_line()|
-`require('line-mover').move_line(direction)`
-  Moves the current line based on the specified direction. Primarily used
-  internally for Normal mode mappings.
-  {direction} is one of 'up', 'down', 'left', 'right'.
+Usage ~
+>lua
+require('line-mover').move_line('up') -- Moves the current line based on the specified direction.
+<
+-------------------------------------------------------------------------------
 
-|function|                                      |line-mover.move_selection()|
-`require('line-mover').move_selection(direction)`
-  Moves the current visual selection based on the specified direction. Primarily
-  used internally for Visual mode mappings.
-  {direction} is one of 'up', 'down', 'left', 'right'.
+`line-mover.move_selection`({direction})                          *line-mover.move_selection()*
+Parameters ~ 
+{direction} `(string)` Either one of 'up', 'down', 'right', 'left' - direction of movement.
+
+Usage ~
+>lua
+require('line-mover').move_selection('up') -- moves the current visual selection up one line.
+<
+-------------------------------------------------------------------------------
+

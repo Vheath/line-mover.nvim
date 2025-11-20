@@ -6,17 +6,19 @@ LineMover is a lightweight Neovim plugin that provides seamless, repeatable
 movement of the current line or a visual selection both vertically (up/down)
 and horizontally (indent/unindent).
 
+Plugin provides mappings and lua functions for line-movement(see `:h`)
+
 ## Installation                                         
 Use your preferred package manager (e.g., packer.nvim, lazy.nvim).
 
 Example (lazy.nvim):
 ```lua
-    {
+{
     'Vheath/line-mover.nvim',
     config = function()
       require('line-mover').setup()
     end,
-    },
+},
 ```
 
 
@@ -40,7 +42,7 @@ mappings are defined under the `mappings` key.
   })
   ```
 
-## USAGE
+## Usage
 The main and only feature is moving lines and selections both
 vertically/horizontally.
 

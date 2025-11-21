@@ -1,12 +1,12 @@
 --- line-mover.nvim
 --- Features:
----   * Move the current line (Normal mode) or visual selection (Visual/Block mode) up or down.
----   * Horizontally indent/unindent the current line (Normal mode) or visual selection (Visual/Block mode).
----   * Supports repetition using the Vim count prefix (e.g., `5<A-k>` moves 5 lines up).
+---   * Move the current line (Normal mode) or visual selection up or down.
+---   * Horizontally indent/unindent the current line (Normal mode) or visual selection.
+---   * Supports repetition using the Vim count prefix.
 ---
 ---
 --- Configuration:
---- ```lua
+--- > lua
 --- require('line-mover').setup({
 ---     mappings = {
 ---         -- Normal Mode Mappings (for single line movement/indentation)
@@ -21,28 +21,26 @@
 ---         visual_left = "<A-h>",
 ---         visual_right = "<A-l>",
 ---     },
----     -- Add other configuration options here in the future
 --- })
---- ```
+--- <
 ---
 --- Default Mappings:
 --- The plugin defaults to using the **Alt** key combined with standard motion keys:
 ---
---- * **Vertical Movement (Line/Selection)**
----     * `<Alt-k>`: Move **Up**
----     * `<Alt-j>`: Move **Down**
+--- * *Vertical Movement (Line/Selection)*
+---     - `<Alt-k>`: Move *Up*
+---     - `<Alt-j>`: Move *Down*
 ---
---- * **Horizontal Movement (Line/Selection)**
----     * `<Alt-h>`: Move **Left** (Un-indent)
----     * `<Alt-l>`: Move **Right** (Indent)
+--- * *Horizontal Movement (Line/Selection)*
+---     - `<Alt-h>`: Move *Left* (Un-indent)
+---     - `<Alt-l>`: Move *Right* (Indent)
 ---
 
----@alias _move_direction string: One of "left", "down", "up", "right".
+---@alias __move_direction string: One of "left", "down", "up", "right".
 
 -- Module definition ==========================================================
 local Module = {} -- Module logic
 local H = {} -- Helper functions
-H.move_keys = {}
 local default_config = {
 	mappings = {
 		one_up = "<A-k>",
@@ -74,6 +72,8 @@ Module.setup = function(config)
 
 	H.check_type("options", config.options, "table", true)
 
+	_G.LineMover = Module
+
 	-- stylua: ignore start
 	H.map( "n", default_config.mappings.one_down,  "<Cmd>lua LineMover.move_line('down')<CR>", { desc = "Move one line down" })
 	H.map( "n", default_config.mappings.one_left,  "<Cmd>lua LineMover.move_line('left')<CR>", { desc = "Move one line left" })
@@ -87,20 +87,23 @@ Module.setup = function(config)
 	-- stylua: ignore end
 end
 
---- @param: _move_direction
---- Moves one line in any direction.
-Module.move_line = function(_move_direction)
+-- Moves one line in any direction.
+--- @param move_direction __move_direction
+--- @usage >lua
+--- require('line-mover').move_line('up') -- Moves the current line based on the specified direction.
+--- <
+Module.move_line = function(move_direction)
 	-- Get cursor position, position of end_char
 	local ref_curpos, ref_last_col = vim.fn.getcurpos(), vim.fn.col("$")
-	if ref_curpos[2] == 1 and _move_direction == "up" then
+	if ref_curpos[2] == 1 and move_direction == "up" then
 		return
 	end
 
 	local repeat_times = vim.v.count1
 
 	-- First handle horizontal movements
-	if _move_direction == "left" or _move_direction == "right" then
-		local key = H.indent_keys[_move_direction]
+	if move_direction == "left" or move_direction == "right" then
+		local key = H.indent_keys[move_direction]
 		vim.cmd(string.rep(key, repeat_times)) --
 		H.correct_cursor_col(ref_curpos, ref_last_col)
 		return
@@ -110,11 +113,11 @@ Module.move_line = function(_move_direction)
 
 	vim.cmd('normal! "zyy"_dd') -- Yank to "z register current line, remove it to black hole reg
 
-	local paste_key = _move_direction == "down" and "p" or "P"
-	repeat_times = _move_direction == "down" and repeat_times - 1 or repeat_times
+	local paste_key = move_direction == "down" and "p" or "P"
+	repeat_times = move_direction == "down" and repeat_times - 1 or repeat_times
 	if repeat_times > 0 then
 		-- move current line repeat_times times
-		vim.cmd("normal!" .. string.rep(H.move_keys[_move_direction], repeat_times))
+		vim.cmd("normal!" .. string.rep(H.move_keys[move_direction], repeat_times))
 	end
 
 	vim.cmd('normal! "z' .. paste_key) -- Paste from "z register before/after current line
@@ -126,24 +129,26 @@ Module.move_line = function(_move_direction)
 	vim.fn.setreg('"z', cache_z_reg)
 end
 
---- @param: _move_direction
---- Moves selected text in any direction. Mush be in visual mode to work
-Module.move_selection = function(_move_direction)
+--- @param move_direction __move_direction
+--- @usage >lua
+--- require('line-mover').move_selection('up') -- moves the current visual selection up one line.
+---  <
+Module.move_selection = function(move_direction)
 	-- Act only inside visual mode
 	if not (vim.fn.mode() == "v" or vim.fn.mode() == "V" or vim.fn.mode() == "\22") then
 		return
 	end
 
 	local ref_curpos, ref_last_col = vim.fn.getcurpos(), vim.fn.col("$")
-	if ref_curpos[2] == 1 and _move_direction == "up" then
+	if ref_curpos[2] == 1 and move_direction == "up" then
 		return
 	end
 
 	local repeat_times = vim.v.count1
 
 	-- First handle horizontal movements
-	if _move_direction == "left" or _move_direction == "right" then
-		local key = H.indent_keys[_move_direction]
+	if move_direction == "left" or move_direction == "right" then
+		local key = H.indent_keys[move_direction]
 		vim.cmd("normal! " .. string.rep(key .. "gv", repeat_times)) --
 		H.correct_cursor_col(ref_curpos, ref_last_col)
 		return
@@ -153,11 +158,11 @@ Module.move_selection = function(_move_direction)
 
 	vim.cmd('normal! "zygv"_d') -- Yank to "z register current line, remove it to black hole reg
 
-	local paste_key = _move_direction == "down" and "p" or "P"
-	repeat_times = _move_direction == "down" and repeat_times - 1 or repeat_times
+	local paste_key = move_direction == "down" and "p" or "P"
+	repeat_times = move_direction == "down" and repeat_times - 1 or repeat_times
 	if repeat_times > 0 then
 		-- move current line repeat_times times
-		vim.cmd("normal!" .. string.rep(H.move_keys[_move_direction], repeat_times))
+		vim.cmd("normal!" .. string.rep(H.move_keys[move_direction], repeat_times))
 	end
 
 	vim.cmd('normal! "z' .. paste_key) -- Paste from "z register before/after current line
